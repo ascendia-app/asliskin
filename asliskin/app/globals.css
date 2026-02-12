@@ -1,0 +1,416 @@
+/* Variables for easy theme management */
+:root {
+    --bg-cream: #FDFBF7;
+    --sage-green: #8DAA91;
+    --sage-dark: #6B846E;
+    --text-charcoal: #36454F;
+    --text-muted: #8E9A9F;
+    --white: #FFFFFF;
+    --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.04);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-cream);
+    color: var(--text-charcoal);
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Typography */
+h1, h2, h3, .italic {
+    font-family: 'Instrument Serif', serif;
+    font-weight: 400;
+}
+
+h1 { font-size: 4rem; margin-bottom: 1rem; }
+.italic { font-style: italic; }
+
+/* Layout */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 4rem 2rem;
+}
+
+/* Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2rem 4rem;
+    background: transparent;
+}
+
+.logo {
+    font-family: 'Instrument Serif', serif;
+    font-size: 1.8rem;
+    color: var(--sage-green);
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: var(--text-charcoal);
+    margin-left: 2rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* Hero Section */
+.hero {
+    text-align: center;
+    padding: 6rem 2rem;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.subtitle {
+    text-transform: uppercase;
+    letter-spacing: 0.2rem;
+    font-size: 0.7rem;
+    color: var(--sage-green);
+    font-weight: 700;
+}
+
+/* Search Bar */
+.search-container {
+    margin-top: 3rem;
+    display: flex;
+    background: var(--white);
+    padding: 0.5rem;
+    border-radius: 100px;
+    box-shadow: var(--shadow-soft);
+}
+
+.search-container input {
+    flex: 1;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 100px;
+    outline: none;
+    font-size: 1rem;
+}
+
+/* Cards & Grid */
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.card {
+    background: var(--white);
+    border-radius: 20px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+}
+
+.card-image {
+    height: 300px;
+    background: #f1f1f1;
+    position: relative;
+}
+
+.badge {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    background: var(--sage-green);
+    color: white;
+    padding: 0.3rem 0.8rem;
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    border-radius: 50px;
+}
+
+.card-content {
+    padding: 1.5rem;
+}
+
+.product-name { font-size: 1.4rem; }
+.brand { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;}
+
+.tags span {
+    font-size: 0.7rem;
+    border: 1px solid #eee;
+    padding: 0.2rem 0.6rem;
+    border-radius: 50px;
+    margin-right: 0.5rem;
+}
+
+/* Buttons */
+.btn-primary {
+    background: var(--sage-green);
+    color: white;
+    border: none;
+    padding: 1rem 2.5rem;
+    border-radius: 100px;
+    cursor: pointer;
+}
+.tag-safe {
+    background: #e6f4ea;
+    color: #1e7e34;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.tag-warning {
+    background: #fff3cd;
+    color: #856404;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+.product-image-container {
+    width: 100%;
+    height: 200px; /* Fixed height for a clean grid */
+    overflow: hidden;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.product-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Keeps the bottle shape without stretching it */
+    padding: 10px;
+}
+.product-details {
+  margin: 12px 0;
+  font-size: 0.85rem;
+  color: #444;
+  line-height: 1.4;
+}
+
+.actives {
+  color: #a37d5d; /* A nice earthy gold color for active ingredients */
+  font-weight: 500;
+}
+
+.price-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+}
+
+.btn-buy {
+  background: #000;
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 0.8rem;
+}
+/* --- THE MODAL OVERLAY --- */
+.modal-overlay {
+    position: fixed;
+    inset: 0; /* Shorthand for top, left, right, bottom: 0 */
+    background: rgba(54, 69, 79, 0.4); /* Uses your charcoal color with transparency */
+    backdrop-filter: blur(8px); /* Modern frosted glass effect */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; /* Higher than navbar */
+    padding: 20px;
+    cursor: default;
+}
+
+/* --- THE MODAL CONTAINER --- */
+.modal-content {
+    background: var(--white);
+    width: 100%;
+    max-width: 1000px;
+    max-height: 90vh;
+    border-radius: 30px; /* Matching your organic card style */
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.1);
+    display: flex; /* Using Flex for the main split */
+}
+
+/* --- THE MODAL GRID/SPLIT --- */
+.modal-grid {
+    display: grid;
+    grid-template-columns: 450px 1fr; /* Image gets fixed space, text takes rest */
+    width: 100%;
+}
+
+/* --- LEFT SIDE: IMAGE --- */
+.modal-image-side {
+    background-color: #F8F9F8; /* Subtle off-white to contrast the bottle */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    height: 100%;
+}
+
+.modal-image-side img {
+    max-width: 100%;
+    max-height: 500px;
+    object-fit: contain;
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.05));
+}
+
+/* --- RIGHT SIDE: CONTENT --- */
+.modal-info-side {
+    padding: 60px; /* Tons of padding to remove "clutter" */
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.brand-muted {
+    text-transform: uppercase;
+    letter-spacing: 0.15rem;
+    font-size: 0.75rem;
+    color: var(--sage-green);
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.modal-info-side h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+    color: var(--text-charcoal);
+}
+
+/* --- CLEANING THE DETAILS --- */
+.full-details {
+    margin-top: 1rem;
+}
+
+.full-details p {
+    font-size: 0.95rem;
+    margin-bottom: 0.8rem;
+    color: var(--text-charcoal);
+    display: flex;
+    gap: 10px;
+}
+
+.full-details strong {
+    min-width: 100px; /* Aligns the labels */
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.ingredients-text {
+    background: var(--bg-cream);
+    padding: 1.5rem;
+    border-radius: 15px;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: var(--text-muted);
+    margin: 1.5rem 0;
+}
+
+.safety-notes-box {
+    border-left: 3px solid #E9C46A; /* Warning gold */
+    padding-left: 1.5rem;
+    margin-top: 1rem;
+}
+
+/* --- FOOTER & CLOSE --- */
+.modal-footer {
+    margin-top: auto;
+    padding-top: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.close-btn {
+    position: absolute;
+    top: 25px;
+    right: 25px;
+    background: var(--bg-cream);
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-charcoal);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.close-btn:hover {
+    background: var(--sage-green);
+    color: white;
+}
+
+/* --- MOBILE RESPONSIVE --- */
+@media (max-width: 900px) {
+    .modal-grid {
+        grid-template-columns: 1fr;
+    }
+    .modal-image-side {
+        height: 300px;
+        padding: 20px;
+    }
+    .modal-info-side {
+        padding: 30px;
+    }
+}
+/* Container for all tags to prevent squishing */
+.modal-tags, .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 1.5rem;
+}
+
+/* Base style for all tags to ensure consistency */
+.tag-safe, .tag-warning, .tag-halal, .tag-steroid{
+    font-size: 0.7rem !important; /* Forces uniform size */
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 6px 12px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+}
+
+/* Halal Specific: Clinical Blue */
+.tag-halal {
+    background: #F0F7FF;
+    color: #0056B3;
+    border: 1px solid #D1E7FF;
+}
+
+/* Steroid Free/Safe Specific: Sage/Green */
+.tag-safe {
+    background: #E6F4EA;
+    color: #1E7E34;
+    border: 1px solid #C2E7CD;
+}
+.tag-steroid{
+    background: #E6F4EA;
+    color: #1E7E34;
+    border: 1px solid #C2E7CD;
+}
