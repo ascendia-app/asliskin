@@ -4,31 +4,81 @@ import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
 
 export default function Home() {
-  const [products, setProducts] = useState<any[]>([]);
-  const [selectedProduct, setSelectedProduct] = useState<any>(null);
+     const [zoomStyle, setZoomStyle] = useState({ display: 'none', top: 0, left: 0, backgroundPosition: '0% 0%' });
+const handleMouseMove = (e: React.MouseEvent) => {
+  const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
+  
+  // Calculate percentage position of mouse inside the image
+  const x = ((e.pageX - left - window.scrollX) / width) * 100;
+  const y = ((e.pageY - top - window.scrollY) / height) * 100;
+
+  setZoomStyle({
+    display: 'block',
+    top: e.pageY - top - window.scrollY - 75, // Centers the 150px circle
+    left: e.pageX - left - window.scrollX - 75,
+    backgroundPosition: `${x}% ${y}%`
+  });
+};
+
+const handleMouseLeave = () => {
+  setZoomStyle({ ...zoomStyle, display: 'none' });
+};   
+  const [plushies, setPlushies] = useState<any[]>([]);
+  const [selectedPlushie, setSelectedPlushie] = useState<any>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Added for toggle
-
+// Temporary debug line
+if (selectedPlushie) console.log("MODAL SHOULD BE OPEN FOR:", selectedPlushie.name);
   useEffect(() => {
-    async function getProducts() {
-      const { data, error } = await supabase.from('products').select('*');
+    async function getPlushies() {
+      const { data, error } = await supabase.from('plushies').select('*');
       if (error) console.error('Error:', error);
-      if (data) setProducts(data);
+      if (data) setPlushies(data);
     }
-    getProducts();
+    getPlushies();
   }, []);
+// Inside your Home() function
+const [selectedSize, setSelectedSize] = useState('Small');
 
-  useEffect(() => {
-  if (isSidebarOpen) {
+// Add an effect to reset size to Medium whenever a new plushie is opened
+useEffect(() => {
+  if (selectedPlushie) {
+    setSelectedSize('Medium');
+  }
+}, [selectedPlushie]);
+
+// Helper to get the price from the database object
+const getCurrentPrice = () => {
+  if (!selectedPlushie?.price_variants) return selectedPlushie?.price || 0;
+  
+  // Look through the array for the object matching the size
+  const variant = selectedPlushie.price_variants.find(
+    (v: any) => v.size === selectedSize
+  );
+  
+  return variant ? variant.price : selectedPlushie.price;
+};
+
+// 3. Reset to Medium when opening a new plushie
+useEffect(() => {
+  if (selectedPlushie) {
+    setSelectedSize('Small');
+  }
+}, [selectedPlushie]);
+useEffect(() => {
+  // If either sidebar is open OR a plushie is selected, lock scroll
+  if (isSidebarOpen || selectedPlushie) {
     document.body.style.overflow = 'hidden';
+    document.body.style.paddingRight = 'var(--scrollbar-width, 0px)'; // Prevents "layout shift"
   } else {
     document.body.style.overflow = 'unset';
+    document.body.style.paddingRight = '0px';
   }
 
-  // Cleanup to ensure scroll is restored if the component unmounts
   return () => {
     document.body.style.overflow = 'unset';
+    document.body.style.paddingRight = '0px';
   };
-}, [isSidebarOpen]);
+}, [isSidebarOpen, selectedPlushie]); // Re-run when either state changes
   return (
     <main className="relative min-h-screen overflow-x-hidden">
 
@@ -122,34 +172,37 @@ export default function Home() {
         </div>
       </header>
 
-      <div className="container relative z-10">
+      <div className="container relative z-30">
         <section className="product-grid">
-          {products?.map((product) => (
-            <div 
-              className="card" 
-              key={product.id} 
-              onClick={() => setSelectedProduct(product)} 
-            >
-              {product.image_url && (
+          {plushies?.map((plushie) => (
+       <div 
+  className="card cursor-pointer group" 
+  key={plushie.id} 
+  onClick={(e) => {
+    e.stopPropagation(); // Stops the click from getting "lost" in parent layers
+    console.log("Card Clicked:", plushie.name); // Check your F12 console for this!
+    setSelectedPlushie(plushie);
+  }} 
+>
+              {plushie.image_url && (
                 <div className="product-image-container">
-                  <img src={product.image_url} alt={product.name} className="product-image" />
+                  <img src={plushie.image_url} alt={plushie.name} className="product-image" />
                   <div className="image-overlay">View Details</div>
                 </div>
               )}
               
               <div className="card-content">
                 <div className="flex justify-between items-start mb-2">
-                  <p className="brand">{product.category || 'Handmade'}</p>
-                  <span className="price-tag">Rs. {product.price}</span>
+                  <p className="brand">{plushie.category || 'Handmade'}</p>
+                  <span className="price-tag">Rs. {plushie.price}</span>
                 </div>
                 
-                <h3 className="product-name">{product.name}</h3>
+                <h3 className="product-name">{plushie.name}</h3>
                 
                 <div className="tags">
-                  <span className={product.in_stock ? "tag-stock" : "tag-order"}>
-                    {product.in_stock ? "Ready to Ship" : "Made to Order"}
+                  <span className={plushie.in_stock ? "tag-stock" : "tag-order"}>
+                    {plushie.in_stock ? "Ready to Ship" : "Made to Order"}
                   </span>
-                  {product.material && <span className="tag-material">{product.material}</span>}
                 </div>
 
                 <div className="price-row-modern">
@@ -160,47 +213,57 @@ export default function Home() {
           ))}
         </section>
       </div>
-
-      {selectedProduct && (
-        <div className="modal-overlay" onClick={() => setSelectedProduct(null)}>
+     {selectedPlushie && (
+        <div className="modal-overlay" onClick={() => setSelectedPlushie(null)}>
           <div className="modal-content-modern" onClick={(e) => e.stopPropagation()}>
-            <button className="close-btn-modern" onClick={() => setSelectedProduct(null)}>✕</button>
+            <button className="close-btn-modern" onClick={() => setSelectedPlushie(null)}>✕</button>
             <div className="modal-body">
               <div className="modal-image-wrapper">
-                <img src={selectedProduct.image_url} alt={selectedProduct.name} />
-              </div>
-              <div className="modal-text-wrapper">
-                <p className="brand-muted">{selectedProduct.category}</p>
-                <h2 className="modal-title-swirly">{selectedProduct.name}</h2>
-                <div className="modal-tags">
-                  <span className={selectedProduct.in_stock ? "tag-stock" : "tag-order"}>
-                    {selectedProduct.in_stock ? "Ready to Ship" : "Made to Order"}
-                  </span>
-                </div>
-                <div className="details-box">
-                  <div className="detail-item">
-                    <span>Material:</span>
-                    <strong>{selectedProduct.material || "Milk Cotton"}</strong>
-                  </div>
-                  <div className="detail-item">
-                    <span>Size:</span>
-                    <strong>{selectedProduct.size || "Standard"}</strong>
-                  </div>
-                </div>
-                <p className="description-text">{selectedProduct.description}</p>
-                <div className="care-instructions-card">
-                  <p><strong>Care:</strong> {selectedProduct.care_instructions || "Hand wash gently with cold water and air dry."}</p>
-                </div>
-                <div className="modal-action">
-                  <div className="price-stack">
-                    <span className="label">Investment</span>
-                    <span className="amount">Rs. {selectedProduct.price}</span>
-                  </div>
-                  <a href={`https://wa.me/YOURNUMBER?text=Hi! I am interested in ${selectedProduct.name}`} target="_blank" className="whatsapp-button">
-                    Secure via WhatsApp
-                  </a>
-                </div>
-              </div>
+  <img 
+    src={selectedPlushie.image_url} 
+    alt={selectedPlushie.name} 
+    loading="lazy"
+  />
+</div>
+<div className="modal-text-wrapper">
+  <p className="brand-muted">{selectedPlushie.category}</p>
+  <h2 className="modal-title-swirly">{selectedPlushie.name}</h2>
+  
+  
+
+  <p className="description-text">{selectedPlushie.description}</p>
+{/* SIZE SELECTOR FROM DATABASE */}
+  {selectedPlushie.price_variants && (
+ <div className="size-selector-container">
+  <p className="text-[10px] uppercase tracking-[0.3em] font-bold opacity-30 mb-4">
+    Select Your Size
+  </p>
+  <div className="flex flex-wrap gap-3">
+  {/* Corrected: Map directly over the array, not Object.keys */}
+  {selectedPlushie.price_variants?.map((variant: any) => (
+    <button
+      key={variant.size}
+      onClick={() => setSelectedSize(variant.size)}
+      className={`size-pill-aesthetic ${selectedSize === variant.size ? 'active' : ''}`}
+    >
+      {variant.size} {/* This will now show "Small", "Medium", etc. */}
+    </button>
+  ))}
+</div>
+</div>
+  )}
+  <div className="modal-action">
+    <div className="price-stack">
+      <span className="label">Total Investment</span>
+      {/* Price updates dynamically from DB */}
+      <span className="amount">Rs. {getCurrentPrice()}</span>
+    </div>
+    
+    <button className="addtocart">
+      Add to Cart
+    </button>
+  </div>
+</div>
             </div>
           </div>
         </div>

@@ -59,9 +59,10 @@ export default function Home() {
             <div className="group">
               <p className="text-[10px] uppercase tracking-[0.3em] opacity-30 mb-6">Store</p>
               <ul className="space-y-6">
-                <li><Link href="/" className="sidebar-link">Home</Link></li>
-                <li><Link href="/allcreations" className="sidebar-link">All Creations</Link></li>
-                <li><a href="#" className="sidebar-link">Plushies</a></li>
+                <li><a href="/allcreations" className="sidebar-link">All Creations</a></li>
+                <li><a href="/plushies" className="sidebar-link">Plushies</a></li>
+                <li><a href="/essentials" className="sidebar-link">Essentials</a></li>
+                 <li><a href="/accessories" className="sidebar-link">Accessories</a></li>
               </ul>
             </div>
             <div className="group pt-6">
@@ -102,7 +103,7 @@ export default function Home() {
 
         <p className="max-w-md mt-12 opacity-60 leading-relaxed font-medium text-sm tracking-wide">
           Discover handcrafted creations and whimsical <br/>
-          designed to bring magic into your everyday life.
+          designs to bring magic into your everyday life.
         </p>
         
  <button 

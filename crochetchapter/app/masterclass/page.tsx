@@ -56,7 +56,8 @@ export default function Masterclass() {
             <span className="text-[10px] uppercase tracking-[0.4em] font-bold opacity-30"></span>
             <button onClick={() => setIsSidebarOpen(false)} className="close-btn-sidebar text-2xl font-light">
               
-      ✕</button>
+      
+✕</button>
           </div>
           <nav className="space-y-10">
             <div className="group">
