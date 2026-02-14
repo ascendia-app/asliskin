@@ -1,0 +1,657 @@
+/* 1. IMPORTS ALWAYS GO AT THE VERY TOP */
+@import url('https://fonts.googleapis.com/css2?family=Clicker+Script&family=Quicksand:wght@300;500;700&display=swap');
+
+/* 2. TAILWIND DIRECTIVES SECOND */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 3. REFINED THEME VARIABLES */
+:root {
+    --p-pink: #fff0f6;
+    --d-pink: #ff85a2;
+    --peach: #fff9f0;
+    --cotton-candy: #f0f4ff;
+    --mocha: #5c4d4d;
+    --card-white: rgba(255, 255, 255, 0.85);
+}
+
+/* 4. GLOBAL STYLES */
+body {
+    background: linear-gradient(135deg, var(--p-pink) 0%, var(--peach) 50%, var(--cotton-candy) 100%) !important;
+    background-attachment: fixed !important;
+    font-family: 'Quicksand', sans-serif !important;
+    color: var(--mocha);
+    overflow-x: hidden;
+    min-height: 100vh;
+}
+
+/* --- DECORATIVE BUBBLES (Smaller, subtler) --- */
+.bubble-1, .bubble-2, .bubble-3 {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(60px);
+    z-index: 0;
+    opacity: 0.3;
+    pointer-events: none;
+}
+.bubble-1 { width: 350px; height: 350px; background: #f0f4ff; top: -100px; left: -100px; }
+.bubble-2 { width: 300px; height: 300px; background: #fff0f6; bottom: 10%; right: -50px; }
+.bubble-3 { width: 200px; height: 200px; background: #fff9f0; top: 30%; left: 15%; }
+
+/* --- LOGO & HERO (Scaled Down) --- */
+.logo {
+    font-family: 'Clicker Script', cursive !important;
+    font-size: 3rem; /* Reduced from 3.8rem */
+    color: var(--d-pink);
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.hero {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    padding: 20px 20px 40px; /* Reduced padding */
+}
+
+.hero h1 {
+    font-family: 'Clicker Script', cursive !important;
+    font-size: clamp(3.5rem, 10vw, 6.5rem) !important; /* Reduced scale significantly */
+    color: var(--d-pink);
+    margin: 0;
+    line-height: 0.9;
+    text-shadow: 2px 4px 10px rgba(255, 133, 162, 0.15);
+}
+
+.subtitle {
+    text-transform: uppercase;
+    letter-spacing: 5px; /* Reduced from 8px */
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--mocha);
+    opacity: 0.5;
+    margin-bottom: 10px;
+    margin-top: 0;
+}
+
+/* --- THE PRODUCT GRID (Tightened) --- */
+.container {
+    max-width: 1100px; /* Reduced from 1400px */
+    margin: 0 auto;
+    padding: 0 30px 60px;
+    position: relative;
+    z-index: 10;
+}
+
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Reduced card width */
+    gap: 35px; /* Tighter gap */
+}
+
+/* --- BOUNCY CLOUD CARDS (Smaller Radius) --- */
+.card {
+    background: var(--card-white) !important;
+    backdrop-filter: blur(10px);
+    border: 2px solid #ffffff !important;
+    border-radius: 40px !important; /* Reduced from 60px */
+    padding: 10px;
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+    cursor: pointer;
+}
+
+.card:hover {
+    transform: translateY(-12px) scale(1.02);
+    background: #ffffff !important;
+    box-shadow: 0 25px 50px rgba(255, 133, 162, 0.12) !important;
+}
+
+.product-image-container {
+    height: 300px; /* Reduced from 420px */
+    border-radius: 32px;
+    overflow: hidden;
+    background: #fff;
+}
+
+.product-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.8s ease;
+}
+
+/* --- CARD CONTENT --- */
+.card-content {
+    padding: 15px 10px;
+}
+
+
+
+
+/* Close Button Animation */
+
+.product-name {
+    font-size: 1.4rem; /* Reduced from 2.2rem */
+    font-weight: 700;
+    color: var(--mocha);
+    margin-bottom: 8px;
+}
+
+.price-tag {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--mocha);
+    margin-top: 10px;
+}
+.learn-more {
+        font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--d-pink);
+    margin-top: 10px;
+}
+
+/* --- TAGS (Smaller) --- */
+.tags {
+    display: flex;
+    gap: 6px;
+    margin: 10px 0;
+}
+
+.tag-stock, .tag-material {
+    padding: 4px 12px;
+    border-radius: 100px;
+    font-size: 0.65rem;
+    font-weight: 700;
+}
+
+.tag-stock { background: #e1f7f1; color: #26a69a; }
+.tag-material { background: #fff; border: 1px solid var(--p-pink); color: var(--d-pink); }
+
+/* --- MODAL STYLES (More Compact) --- */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(255, 240, 246, 0.8);
+    backdrop-filter: blur(8px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.modal-content-modern {
+    background: #fff;
+    width: 90%;
+    max-width: 850px; /* Reduced from 1100px */
+    max-height: 85vh;
+    border-radius: 45px;
+    overflow: hidden;
+    box-shadow: 0 30px 70px rgba(255, 133, 162, 0.2);
+}
+
+.modal-body {
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+}
+
+.modal-image-wrapper {
+    height: 100%;
+    min-height: 400px;
+}
+
+.modal-text-wrapper {
+    padding: 35px; /* Reduced from 60px */
+    overflow-y: auto;
+}
+
+.modal-title-swirly {
+    font-family: 'Clicker Script', cursive !important;
+    font-size: 3.5rem; /* Reduced from 5rem */
+    color: var(--d-pink);
+    line-height: 1.1;
+}
+
+.whatsapp-button {
+    display: block;
+    background: var(--d-pink);
+    color: white;
+    padding: 1rem;
+    border-radius: 30px;
+    text-align: center;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    text-decoration: none;
+    margin-top: 20px;
+    transition: all 0.3s ease;
+}
+
+@media (max-width: 768px) {
+    .modal-body { grid-template-columns: 1fr; }
+    .modal-image-wrapper { height: 250px; min-height: auto; }
+    .hero h1 { font-size: 4rem !important; }
+}
+
+/* --- LUXE BOUTIQUE SIDEBAR SYSTEM --- */
+
+div.sidebar-drawer {
+    position: fixed !important;
+    overflow-y: auto !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    width: 380px !important;
+    background-color: white !important;
+    z-index: 10001 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    /* Default hidden state: tucked away to the left */
+    left: -420px !important; 
+    transition: left 0.6s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    box-shadow: none;
+    padding: 80px 50px !important; /* Internal breathing room */
+}
+
+/* State: Open */
+div.sidebar-drawer.sidebar-visible {
+    left: 0 !important;
+    box-shadow: 20px 0 60px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Sidebar Overlay (Blur background) */
+.sidebar-overlay {
+    position: fixed !important;
+    inset: 0 !important;
+    background: rgba(255, 255, 255, 0.7) !important;
+    backdrop-filter: blur(8px) !important;
+    z-index: 10000 !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transition: all 0.4s ease !important;
+}
+
+.sidebar-overlay.overlay-visible {
+    /* Changed from 0.7 to 0.85 and added a slight mocha tint */
+    background: rgba(45, 38, 38, 0.4) !important; 
+    
+    /* Increased blur from 8px to 12px for more depth */
+    backdrop-filter: blur(12px) !important;
+    
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+}
+/* --- SIDEBAR CONTENT TYPOGRAPHY --- */
+
+.sidebar-drawer p.uppercase {
+    font-size: 10px !important;
+    letter-spacing: 0.5em !important;
+    margin-bottom: 30px !important;
+    opacity: 0.4;
+    font-weight: 700 !important;
+    color: var(--mocha);
+}
+
+.sidebar-drawer ul {
+    list-style: none !important;
+    padding: 0 !important;
+    margin: 0 0 50px 0 !important;
+}
+
+.sidebar-drawer li {
+    margin-bottom: 25px !important;
+}
+
+.sidebar-link {
+    font-size: 1.3rem !important;
+    font-weight: 500 !important;
+    color: var(--mocha) !important;
+    text-decoration: none !important;
+    transition: all 0.3s ease !important;
+    display: inline-block !important;
+}
+
+.sidebar-link:hover {
+    color: var(--d-pink) !important;
+    transform: translateX(12px) !important;
+}
+
+/* The Script Link (Lahore Masterclass) */
+.sidebar-link.font-clicker {
+    font-family: 'Clicker Script', cursive !important;
+    font-size: 2.8rem !important;
+    line-height: 1 !important;
+    color: var(--d-pink) !important;
+}
+
+/* Close Button Animation */
+.close-btn-sidebar {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--mocha);
+    opacity: 0.5;
+    transition: all 0.3s ease;
+}
+
+.close-btn-sidebar:hover {
+    opacity: 1;
+    transform: rotate(90deg);
+}
+/* --- LUXE SIDEBAR REFINEMENT --- */
+
+/* 1. Main Drawer - Added a subtle right border for definition */
+div.sidebar-drawer {
+    position: fixed !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    width: 380px !important;
+    background-color: #ffffff !important;
+    z-index: 10001 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    left: -420px !important; 
+    transition: left 0.7s cubic-bezier(0.19, 1, 0.22, 1) !important;
+    padding: 0 !important;
+    border-right: 1px solid rgba(255, 133, 162, 0.1);
+}
+
+
+
+/* 2. Internal Layout Spacing */
+div.sidebar-drawer > div {
+    padding: 100px 50px 60px !important; /* Huge top padding for breathing room */
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 3. Section Labels (Store, Learning) */
+div.sidebar-drawer p.uppercase {
+    font-size: 10px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.5em !important;
+    color: var(--mocha);
+    opacity: 0.3;
+    margin-bottom: 35px !important;
+    text-transform: uppercase;
+}
+
+/* 4. Link Styling */
+.sidebar-link {
+    font-size: 1.4rem !important;
+    font-weight: 500 !important;
+    color: var(--mocha) !important;
+    text-decoration: none !important;
+    transition: all 0.4s ease !important;
+    display: inline-block !important;
+    letter-spacing: -0.02em;
+}
+
+.sidebar-link:hover {
+    color: var(--d-pink) !important;
+    transform: translateX(12px) !important;
+}
+
+/* 5. Masterclass "Whimsy" Styling */
+.sidebar-link.font-clicker {
+    font-family: 'Clicker Script', cursive !important;
+    font-size: 2.8rem !important;
+    line-height: 0.8 !important;
+    margin-top: -5px !important;
+    color: var(--d-pink) !important;
+    opacity: 0.9;
+}
+
+.sidebar-link.font-clicker:hover {
+    opacity: 1;
+    transform: translateX(15px) scale(1.05) !important;
+}
+
+/* 6. Navigation Gaps */
+div.sidebar-drawer nav.space-y-10 > div {
+    margin-bottom: 60px !important; /* Space between Store and Learning */
+}
+
+div.sidebar-drawer ul.space-y-6 li {
+    margin-bottom: 22px !important; /* Space between individual links */
+}
+
+/* 7. Footer / Logo Tag */
+div.sidebar-drawer .mt-auto {
+    border-top: 1px solid rgba(0, 0, 0, 0.04) !important;
+    padding-top: 40px !important;
+}
+
+div.sidebar-drawer .mt-auto p {
+    font-size: 11px !important;
+    line-height: 1.8 !important;
+    letter-spacing: 0.02em !important;
+    opacity: 0.4;
+}
+
+/* 8. Close Button Positioning */
+/* --- FIXING THE CLOSING LOGIC (DO NOT CHANGE OTHER STYLES) --- */
+
+/* This forces the drawer to move when the state changes */
+div.sidebar-drawer.sidebar-visible {
+    left: 0 !important;
+    box-shadow: 30px 0 80px rgba(92, 77, 77, 0.08) !important;
+}
+
+/* This ensures the overlay disappears when not active */
+.sidebar-overlay {
+    pointer-events: none; /* Prevents clicking through when hidden */
+}
+
+.sidebar-overlay.overlay-visible {
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+}
+/* --- THE FINAL SCROLLBAR KILLER --- */
+
+/* 1. Force hide the default bars on the root level */
+html, body {
+    scrollbar-width: thin !important; /* Firefox */
+    scrollbar-color: rgba(92, 77, 77, 0.2) transparent !important; /* Firefox */
+}
+
+/* 2. Target EVERY element's scrollbar (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+    width: 5px !important;      /* Vertical */
+    height: 5px !important;     /* Horizontal */
+    background: transparent !important;
+}
+
+/* 3. The draggable handle */
+::-webkit-scrollbar-thumb {
+    background-color: rgba(92, 77, 77, 0.2) !important; /* Light Mocha */
+    border-radius: 20px !important;
+    border: 1px solid transparent !important; /* Creates padding effect */
+    background-clip: content-box !important;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: #ff85a2 !important; /* Signature Pink */
+}
+
+/* 4. The background track */
+::-webkit-scrollbar-track {
+    background: transparent !important;
+    margin: 10px !important; /* Keeps the handle away from the very top/bottom edges */
+}
+
+/* 5. Hide the arrows (buttons) at the ends */
+::-webkit-scrollbar-button {
+    display: none !important;
+}
+
+/* 6. Specific fix for the Sidebar Drawer content */
+.sidebar-drawer div, 
+.modal-text-wrapper,
+.modal-content-modern {
+    scrollbar-width: thin !important;
+    -ms-overflow-style: none !important;
+}
+/* --- HOMEPAGE SPECIFIC TYPOGRAPHY --- */
+
+/* The Main Hero Wrapper */
+h1.flex.flex-col {
+    gap: 10px;
+    margin-top: 20px;
+}
+
+/* "Made with" - Bold Quicksand */
+.text-mocha {
+    color: var(--mocha);
+    letter-spacing: -0.02em;
+    font-family: 'Quicksand', sans-serif !important;
+}
+
+/* "Love & Yarn" - The Script Element */
+.font-clicker {
+    font-family: 'Clicker Script', cursive !important;
+    /* Soft glow effect for the pink script */
+    text-shadow: 0 10px 40px rgba(255, 133, 162, 0.15);
+}
+
+/* "A Boutique Yarn Studio" - The small caps header */
+.subtitle {
+    text-transform: uppercase;
+    letter-spacing: 0.5em; /* Extreme spacing for luxe feel */
+    font-size: 0.7rem;
+    font-weight: 700;
+    opacity: 0.5;
+    color: var(--mocha);
+}
+
+/* Center Logo positioning fix */
+.logo {
+    font-family: 'Clicker Script', cursive !important;
+    filter: drop-shadow(0 4px 10px rgba(255, 133, 162, 0.1));
+    transition: all 0.5s ease;
+    margin-top: 20px;
+}
+/* --- CTA BUTTON REFINEMENT --- */
+
+/* The "Explore All Creations" Button */
+.bg-\[\#5c4d4d\] {
+    background-color: var(--mocha) !important;
+    box-shadow: 0 10px 30px rgba(92, 77, 77, 0.1);
+}
+
+/* Ensure the tracking in the button is elegant */
+.tracking-\[0\.3em\] {
+    letter-spacing: 0.3em !important;
+}
+
+/* --- ENTRANCE ANIMATIONS --- */
+
+@keyframes softFadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Apply animation to Hero content */
+section.h-screen {
+    animation: softFadeUp 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Delay the button slightly for a premium feel */
+section.h-screen a {
+    animation: softFadeUp 1.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+/* --- ATMOSPHERIC BUBBLES --- */
+
+.bubble-1, .bubble-2, .bubble-3 {
+  transition: transform 0.2s ease-out;
+  will-change: transform;
+  filter: blur(60px);
+  /* Make them look more like soft yarn colors */
+  background: radial-gradient(circle, var(--p-pink) 0%, transparent 70%);
+}
+/* --- THE MINIMALIST BOUTIQUE BUTTON --- */
+
+.boutique-btn {
+  position: relative;
+  background: transparent;
+  border: none;
+  padding: 15px 0; /* No box, just vertical padding */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--mocha);
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.4em;
+  transition: all 0.4s ease;
+}
+
+/* The Animated Underline */
+.btn-line {
+  position: absolute;
+  bottom: 10px;
+  left: 0;
+  width: 40px; /* Start short */
+  height: 1.5px;
+  background-color: var(--d-pink);
+  transition: width 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+/* The Arrow - Hidden by default */
+.btn-arrow {
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: all 0.4s ease;
+  color: var(--d-pink);
+  font-size: 16px;
+}
+
+/* --- HOVER STATES --- */
+
+.boutique-btn:hover {
+  letter-spacing: 0.5em; /* Subtle expansion */
+  color: var(--d-pink);
+}
+
+.boutique-btn:hover .btn-line {
+  width: 100%; /* Line grows to full width */
+}
+
+.boutique-btn:hover .btn-arrow {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Active "Pressed" State */
+.boutique-btn:active {
+  transform: scale(0.98);
+  opacity: 0.7;
+}
+/* --- LOGO LINK REFINEMENT --- */
+
+.logo-link {
+    text-decoration: none !important;
+    display: inline-block;
+    cursor: pointer;
+}
+
+/* Ensure the logo color doesn't change when it becomes a link */
+.logo-link .logo {
+    color: var(--d-pink) !important;
+    margin-bottom:50px; /* Let the container handle spacing */
+}
+
+
