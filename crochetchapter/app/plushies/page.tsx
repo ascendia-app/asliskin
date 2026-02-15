@@ -38,6 +38,7 @@ if (selectedPlushie) console.log("MODAL SHOULD BE OPEN FOR:", selectedPlushie.na
   }, []);
 // Inside your Home() function
 const [selectedSize, setSelectedSize] = useState('Small');
+const [selectedColour, setSelectedColour] = useState('');
 
 // Add an effect to reset size to Medium whenever a new plushie is opened
 useEffect(() => {
@@ -45,13 +46,49 @@ useEffect(() => {
     setSelectedSize('Medium');
   }
 }, [selectedPlushie]);
+// 1. Add this state for the active image
+const [activeImage, setActiveImage] = useState('');
 
+// 2. Update the useEffect that runs when a plushie is selected
+useEffect(() => {
+  if (selectedPlushie) {
+    // 1. Default to the main image first
+    setActiveImage(selectedPlushie.image_url);
+    setSelectedSize('Small');
+
+    // 2. Check if colour_variants exists and has at least one item
+    if (selectedPlushie.colour_variants && selectedPlushie.colour_variants.length > 0) {
+      
+      // Grab the very first color in the list
+      const firstVariant = selectedPlushie.colour_variants[0];
+
+      // Set the button to 'active' for the first color
+      setSelectedColour(firstVariant.colour);
+
+      // Swap the image to the first color's image (if it exists)
+      if (firstVariant.image_url) {
+        setActiveImage(firstVariant.image_url);
+      }
+    } else {
+      // Clear color if the plushie doesn't have any variants
+      setSelectedColour('');
+    }
+  }
+}, [selectedPlushie]);
+
+// 3. Create a handler for when a color is clicked
+const handleColourChange = (variant: any) => {
+  setSelectedColour(variant.colour);
+  if (variant.image_url) {
+    setActiveImage(variant.image_url);
+  }
+};
 // Helper to get the price from the database object
 const getCurrentPrice = () => {
-  if (!selectedPlushie?.price_variants) return selectedPlushie?.price || 0;
+  if (!selectedPlushie?.size_variants) return selectedPlushie?.price || 0;
   
   // Look through the array for the object matching the size
-  const variant = selectedPlushie.price_variants.find(
+  const variant = selectedPlushie.size_variants.find(
     (v: any) => v.size === selectedSize
   );
   
@@ -213,61 +250,80 @@ useEffect(() => {
           ))}
         </section>
       </div>
-     {selectedPlushie && (
-        <div className="modal-overlay" onClick={() => setSelectedPlushie(null)}>
-          <div className="modal-content-modern" onClick={(e) => e.stopPropagation()}>
-            <button className="close-btn-modern" onClick={() => setSelectedPlushie(null)}>✕</button>
-            <div className="modal-body">
-              <div className="modal-image-wrapper">
-  <img 
-    src={selectedPlushie.image_url} 
-    alt={selectedPlushie.name} 
-    loading="lazy"
-  />
-</div>
-<div className="modal-text-wrapper">
-  <p className="brand-muted">{selectedPlushie.category}</p>
-  <h2 className="modal-title-swirly">{selectedPlushie.name}</h2>
-  
-  
-
-  <p className="description-text">{selectedPlushie.description}</p>
-{/* SIZE SELECTOR FROM DATABASE */}
-  {selectedPlushie.price_variants && (
- <div className="size-selector-container">
-  <p className="text-[10px] uppercase tracking-[0.3em] font-bold opacity-30 mb-4">
-    Select Your Size
-  </p>
-  <div className="flex flex-wrap gap-3">
-  {/* Corrected: Map directly over the array, not Object.keys */}
-  {selectedPlushie.price_variants?.map((variant: any) => (
-    <button
-      key={variant.size}
-      onClick={() => setSelectedSize(variant.size)}
-      className={`size-pill-aesthetic ${selectedSize === variant.size ? 'active' : ''}`}
-    >
-      {variant.size} {/* This will now show "Small", "Medium", etc. */}
-    </button>
-  ))}
-</div>
-</div>
-  )}
-  <div className="modal-action">
-    <div className="price-stack">
-      <span className="label">Total Investment</span>
-      {/* Price updates dynamically from DB */}
-      <span className="amount">Rs. {getCurrentPrice()}</span>
-    </div>
-    
-    <button className="addtocart">
-      Add to Cart
-    </button>
-  </div>
-</div>
-            </div>
-          </div>
+{selectedPlushie && (
+  <div className="modal-overlay" onClick={() => setSelectedPlushie(null)}>
+    <div className="modal-content-modern" onClick={(e) => e.stopPropagation()}>
+      <button className="close-btn-modern" onClick={() => setSelectedPlushie(null)}>✕</button>
+      
+      <div className="modal-body">
+        {/* IMAGE SIDE */}
+        <div 
+          className="modal-image-wrapper relative overflow-hidden"
+          onMouseMove={handleMouseMove}
+          onMouseLeave={handleMouseLeave}
+        >
+       <img src={activeImage} alt={selectedPlushie.name} className="transition-all duration-500" />
+        
         </div>
-      )}
-    </main>
-  );
-}
+
+        {/* TEXT SIDE */}
+        <div className="modal-text-wrapper">
+          <p className="brand-muted">{selectedPlushie.category}</p>
+          <h2 className="modal-title-swirly">{selectedPlushie.name}</h2>
+          <p className="description-text">{selectedPlushie.description}</p>
+
+          {/* SIZE SELECTOR */}
+          {selectedPlushie.size_variants && (
+            <div className="size-selector-container mt-6">
+              <p className="label text-[10px] uppercase tracking-[0.3em] font-bold opacity-30 mb-3">Select Size</p>
+              <div className="flex flex-wrap gap-3">
+                {selectedPlushie.size_variants.map((variant: any) => (
+                  <button
+                    key={variant.size}
+                    onClick={() => setSelectedSize(variant.size)}
+                    className={`size-pill-aesthetic ${selectedSize === variant.size ? 'active' : ''}`}
+                  >
+                    {variant.size}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* COLOUR SELECTOR */}
+          {selectedPlushie.colour_variants && (
+            <div className="colour-selector-container mt-6">
+              <p className="label text-[10px] uppercase tracking-[0.3em] font-bold opacity-30 mb-3">Select Colour</p>
+              <div className="flex flex-wrap gap-3">
+                {selectedPlushie.colour_variants.map((variant: any) => (
+        <button
+          key={variant.colour}
+          /* Changed this line to use handleColourChange */
+          onClick={() => handleColourChange(variant)}
+          className={`colour-pill-aesthetic ${selectedColour === variant.colour ? 'active' : ''}`}
+        >
+          {variant.colour}
+        </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ACTION AREA */}
+          <div className="modal-action">
+            <div className="price-stack">
+              <div className="label">Total Investment</div>
+              <span className="amount">Rs. {getCurrentPrice()}</span>
+            </div>
+<button>
+              Add to Cart
+            </button>
+          </div>
+        </div> {/* End modal-text-wrapper */}
+      </div> {/* End modal-body */}
+    </div> {/* End modal-content-modern */}
+  </div>
+)}
+
+
+</main>)}

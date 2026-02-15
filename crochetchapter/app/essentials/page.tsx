@@ -4,31 +4,119 @@ import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
 
 export default function Home() {
-  const [products, setProducts] = useState<any[]>([]);
-  const [selectedProduct, setSelectedProduct] = useState<any>(null);
+  
+     const [zoomStyle, setZoomStyle] = useState({ display: 'none', top: 0, left: 0, backgroundPosition: '0% 0%' });
+const handleMouseMove = (e: React.MouseEvent) => {
+  const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
+  
+  // Calculate percentage position of mouse inside the image
+  const x = ((e.pageX - left - window.scrollX) / width) * 100;
+  const y = ((e.pageY - top - window.scrollY) / height) * 100;
+
+  setZoomStyle({
+    display: 'block',
+    top: e.pageY - top - window.scrollY - 75, // Centers the 150px circle
+    left: e.pageX - left - window.scrollX - 75,
+    backgroundPosition: `${x}% ${y}%`
+  });
+};
+
+const handleMouseLeave = () => {
+  setZoomStyle({ ...zoomStyle, display: 'none' });
+};   
+  const [essentials, setEssentials] = useState<any[]>([]);
+  const [selectedEssential, setSelectedEssential] = useState<any>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Added for toggle
-
+// Temporary debug line
+if (selectedEssential) console.log("MODAL SHOULD BE OPEN FOR:", selectedEssential.name);
   useEffect(() => {
-    async function getProducts() {
-      const { data, error } = await supabase.from('products').select('*');
+    async function getEssentials() {
+      const { data, error } = await supabase.from('essentials').select('*');
       if (error) console.error('Error:', error);
-      if (data) setProducts(data);
+      if (data) setEssentials(data);
     }
-    getProducts();
+    getEssentials();
   }, []);
+// Inside your Home() function
+const [selectedSize, setSelectedSize] = useState('Small');
+const [selectedColour, setSelectedColour] = useState('');
 
-  useEffect(() => {
-  if (isSidebarOpen) {
+// Add an effect to reset size to Medium whenever a new plushie is opened
+useEffect(() => {
+  if (selectedEssential) {
+    setSelectedSize('Medium');
+  }
+}, [selectedEssential]);
+// 1. Add this state for the active image
+const [activeImage, setActiveImage] = useState('');
+
+// 2. Update the useEffect that runs when a plushie is selected
+useEffect(() => {
+  if (selectedEssential) {
+    // 1. Default to the main image first
+    setActiveImage(selectedEssential.image_url);
+    setSelectedSize('Small');
+
+    // 2. Check if colour_variants exists and has at least one item
+    if (selectedEssential.colour_variants && selectedEssential.colour_variants.length > 0) {
+      
+      // Grab the very first color in the list
+      const firstVariant = selectedEssential.colour_variants[0];
+
+      // Set the button to 'active' for the first color
+      setSelectedColour(firstVariant.colour);
+
+      // Swap the image to the first color's image (if it exists)
+      if (firstVariant.image_url) {
+        setActiveImage(firstVariant.image_url);
+      }
+    } else {
+      // Clear color if the plushie doesn't have any variants
+      setSelectedColour('');
+    }
+  }
+}, [selectedEssential]);
+
+// 3. Create a handler for when a color is clicked
+const handleColourChange = (variant: any) => {
+  setSelectedColour(variant.colour);
+  if (variant.image_url) {
+    setActiveImage(variant.image_url);
+  }
+};
+// Helper to get the price from the database object
+const getCurrentPrice = () => {
+  if (!selectedEssential?.size_variants) return selectedEssential?.price || 0;
+  
+  // Look through the array for the object matching the size
+  const variant = selectedEssential.size_variants.find(
+    (v: any) => v.size === selectedSize
+  );
+  
+  return variant ? variant.price : selectedEssential.price;
+};
+
+// 3. Reset to Medium when opening a new plushie
+useEffect(() => {
+  if (selectedEssential) {
+    setSelectedSize('Small');
+  }
+}, [selectedEssential]);
+useEffect(() => {
+  // If either sidebar is open OR a plushie is selected, lock scroll
+  if (isSidebarOpen || selectedEssential) {
     document.body.style.overflow = 'hidden';
+    document.body.style.paddingRight = 'var(--scrollbar-width, 0px)'; // Prevents "layout shift"
   } else {
     document.body.style.overflow = 'unset';
+    document.body.style.paddingRight = '0px';
   }
 
-  // Cleanup to ensure scroll is restored if the component unmounts
   return () => {
     document.body.style.overflow = 'unset';
+    document.body.style.paddingRight = '0px';
   };
-}, [isSidebarOpen]);
+}, [isSidebarOpen, selectedEssential]); // Re-run when either state changes
   return (
     <main className="relative min-h-screen overflow-x-hidden">
 
@@ -116,7 +204,7 @@ export default function Home() {
     </div>
           <h1><span>Essentials</span></h1>
           <div className="hero-divider"></div>
-          <p className="hero-description">
+           <p className="hero-description">
             Pick and choose from our curated essentials to sparkle up your
              <br></br>
              daily dose of life!
@@ -124,34 +212,37 @@ export default function Home() {
         </div>
       </header>
 
-      <div className="container relative z-10">
+      <div className="container relative z-30">
         <section className="product-grid">
-          {products?.map((product) => (
-            <div 
-              className="card" 
-              key={product.id} 
-              onClick={() => setSelectedProduct(product)} 
-            >
-              {product.image_url && (
+          {essentials?.map((essential) => (
+       <div 
+  className="card cursor-pointer group" 
+  key={essential.id} 
+  onClick={(e) => {
+    e.stopPropagation(); // Stops the click from getting "lost" in parent layers
+    console.log("Card Clicked:", essential.name); // Check your F12 console for this!
+    setSelectedEssential(essential);
+  }} 
+>
+              {essential.image_url && (
                 <div className="product-image-container">
-                  <img src={product.image_url} alt={product.name} className="product-image" />
+                  <img src={essential.image_url} alt={essential.name} className="product-image" />
                   <div className="image-overlay">View Details</div>
                 </div>
               )}
               
               <div className="card-content">
                 <div className="flex justify-between items-start mb-2">
-                  <p className="brand">{product.category || 'Handmade'}</p>
-                  <span className="price-tag">Rs. {product.price}</span>
+                  <p className="brand">{essential.category || 'Handmade'}</p>
+                  <span className="price-tag">Rs. {essential.price}</span>
                 </div>
                 
-                <h3 className="product-name">{product.name}</h3>
+                <h3 className="product-name">{essential.name}</h3>
                 
                 <div className="tags">
-                  <span className={product.in_stock ? "tag-stock" : "tag-order"}>
-                    {product.in_stock ? "Ready to Ship" : "Made to Order"}
+                  <span className={essential.in_stock ? "tag-stock" : "tag-order"}>
+                    {essential.in_stock ? "Ready to Ship" : "Made to Order"}
                   </span>
-                  {product.material && <span className="tag-material">{product.material}</span>}
                 </div>
 
                 <div className="price-row-modern">
@@ -162,51 +253,80 @@ export default function Home() {
           ))}
         </section>
       </div>
+{selectedEssential && (
+  <div className="modal-overlay" onClick={() => setSelectedEssential(null)}>
+    <div className="modal-content-modern" onClick={(e) => e.stopPropagation()}>
+      <button className="close-btn-modern" onClick={() => setSelectedEssential(null)}>✕</button>
+      
+      <div className="modal-body">
+        {/* IMAGE SIDE */}
+        <div 
+          className="modal-image-wrapper relative overflow-hidden"
+          onMouseMove={handleMouseMove}
+          onMouseLeave={handleMouseLeave}
+        >
+       <img src={activeImage} alt={selectedEssential.name} className="transition-all duration-500" />
+        
+        </div>
 
-      {selectedProduct && (
-        <div className="modal-overlay" onClick={() => setSelectedProduct(null)}>
-          <div className="modal-content-modern" onClick={(e) => e.stopPropagation()}>
-            <button className="close-btn-modern" onClick={() => setSelectedProduct(null)}>✕</button>
-            <div className="modal-body">
-              <div className="modal-image-wrapper">
-                <img src={selectedProduct.image_url} alt={selectedProduct.name} />
-              </div>
-              <div className="modal-text-wrapper">
-                <p className="brand-muted">{selectedProduct.category}</p>
-                <h2 className="modal-title-swirly">{selectedProduct.name}</h2>
-                <div className="modal-tags">
-                  <span className={selectedProduct.in_stock ? "tag-stock" : "tag-order"}>
-                    {selectedProduct.in_stock ? "Ready to Ship" : "Made to Order"}
-                  </span>
-                </div>
-                <div className="details-box">
-                  <div className="detail-item">
-                    <span>Material:</span>
-                    <strong>{selectedProduct.material || "Milk Cotton"}</strong>
-                  </div>
-                  <div className="detail-item">
-                    <span>Size:</span>
-                    <strong>{selectedProduct.size || "Standard"}</strong>
-                  </div>
-                </div>
-                <p className="description-text">{selectedProduct.description}</p>
-                <div className="care-instructions-card">
-                  <p><strong>Care:</strong> {selectedProduct.care_instructions || "Hand wash gently with cold water and air dry."}</p>
-                </div>
-                <div className="modal-action">
-                  <div className="price-stack">
-                    <span className="label">Investment</span>
-                    <span className="amount">Rs. {selectedProduct.price}</span>
-                  </div>
-                  <a href={`https://wa.me/YOURNUMBER?text=Hi! I am interested in ${selectedProduct.name}`} target="_blank" className="whatsapp-button">
-                    Secure via WhatsApp
-                  </a>
-                </div>
+        {/* TEXT SIDE */}
+        <div className="modal-text-wrapper">
+          <p className="brand-muted">{selectedEssential.category}</p>
+          <h2 className="modal-title-swirly">{selectedEssential.name}</h2>
+          <p className="description-text">{selectedEssential.description}</p>
+
+          {/* SIZE SELECTOR */}
+          {selectedEssential.size_variants && (
+            <div className="size-selector-container mt-6">
+              <p className="label text-[10px] uppercase tracking-[0.3em] font-bold opacity-30 mb-3">Select Size</p>
+              <div className="flex flex-wrap gap-3">
+                {selectedEssential.size_variants.map((variant: any) => (
+                  <button
+                    key={variant.size}
+                    onClick={() => setSelectedSize(variant.size)}
+                    className={`size-pill-aesthetic ${selectedSize === variant.size ? 'active' : ''}`}
+                  >
+                    {variant.size}
+                  </button>
+                ))}
               </div>
             </div>
+          )}
+
+          {/* COLOUR SELECTOR */}
+          {selectedEssential.colour_variants && (
+            <div className="colour-selector-container mt-6">
+              <p className="label text-[10px] uppercase tracking-[0.3em] font-bold opacity-30 mb-3">Select Colour</p>
+              <div className="flex flex-wrap gap-3">
+                {selectedEssential.colour_variants.map((variant: any) => (
+        <button
+          key={variant.colour}
+          /* Changed this line to use handleColourChange */
+          onClick={() => handleColourChange(variant)}
+          className={`colour-pill-aesthetic ${selectedColour === variant.colour ? 'active' : ''}`}
+        >
+          {variant.colour}
+        </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ACTION AREA */}
+          <div className="modal-action">
+            <div className="price-stack">
+              <div className="label">Total Investment</div>
+              <span className="amount">Rs. {getCurrentPrice()}</span>
+            </div>
+<button>
+              Add to Cart
+            </button>
           </div>
-        </div>
-      )}
-    </main>
-  );
-}
+        </div> {/* End modal-text-wrapper */}
+      </div> {/* End modal-body */}
+    </div> {/* End modal-content-modern */}
+  </div>
+)}
+
+
+</main>)}
